@@ -10,11 +10,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from 'next/image';
 
 const Login = () => {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +26,8 @@ const Login = () => {
       const res = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
         credentials: 'include',
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -35,11 +36,6 @@ const Login = () => {
         throw new Error(data.message || 'Login fejlede');
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify({
-        first_name: data.user.first_name,
-        last_name: data.user.last_name
-      }));
       router.push('/admin');
     } catch (err: any) {
       setError(err.message);

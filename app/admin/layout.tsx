@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 
 interface User {
   first_name: string
   last_name: string
+  role: string
 }
 
 export default function AdminLayout({
@@ -18,21 +19,22 @@ export default function AdminLayout({
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/admin/login')
-      return
+    const checkAuth = async () => {
+      const userData = await getUser()
+      if (!userData || userData.role !== 'ADMIN') {
+        router.push('/admin/login')
+        return
+      }
+      setUser(userData)
     }
-
-    // Hent brugerdata fra localStorage
-    const userData = localStorage.getItem('user')
-    if (userData) {
-      setUser(JSON.parse(userData))
-    }
+    checkAuth()
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+  const handleLogout = async () => {
+    await fetch('http://localhost:5000/api/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
     router.push('/admin/login')
   }
 

@@ -1,26 +1,24 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { getUser } from '@/lib/auth';
 
 const AdminPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkLogin = async () => {
-      const res = await fetch('http://localhost:5000/api/me', {
-        credentials: 'include',
-      });
-
-      if (!res.ok) {
-        router.push('/login');
-      } else {
-        const data = await res.json();
-        if (!data.isAdmin) router.push('/login');
-        else setLoading(false);
+    const checkAuth = async () => {
+      const user = await getUser();
+      if (!user || user.role !== 'ADMIN') {
+        router.push('/admin/login');
+        return;
       }
+      setLoading(false);
     };
 
-    checkLogin();
+    checkAuth();
   }, []);
 
   if (loading) return <p>Loading...</p>;
