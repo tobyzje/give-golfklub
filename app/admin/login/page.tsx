@@ -9,6 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from 'next/image';
 
+// Tilføj custom error type
+type LoginError = {
+  message: string
+}
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,8 +42,9 @@ const Login = () => {
       }
 
       router.push('/admin');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const error = err as LoginError;
+      setError(error.message || 'Der skete en fejl');
     } finally {
       setLoading(false);
     }

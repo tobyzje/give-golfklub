@@ -19,7 +19,7 @@ const AdminPage = () => {
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   if (loading) return <p>Loading...</p>;
 

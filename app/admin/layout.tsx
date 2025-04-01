@@ -28,7 +28,7 @@ export default function AdminLayout({
       setUser(userData)
     }
     checkAuth()
-  }, [])
+  }, [router])
 
   const handleLogout = async () => {
     await fetch('http://localhost:5000/api/logout', {
