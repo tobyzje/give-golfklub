@@ -11,7 +11,6 @@ export default function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    // Check om brugeren allerede har taget stilling til cookies
     const cookieConsent = localStorage.getItem('cookieConsent')
     if (!cookieConsent) {
       setIsVisible(true)
