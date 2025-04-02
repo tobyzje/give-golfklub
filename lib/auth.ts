@@ -1,18 +1,15 @@
-export const isAuthenticated = () => {
-  if (typeof window === 'undefined') return false;
-  
-  // Tjek om der er en gyldig session cookie
-  return document.cookie.includes('session=');
-};
-
-export const getUser = async () => {
+export async function getUser() {
   try {
-    const res = await fetch('http://localhost:5000/api/me', {
-      credentials: 'include'
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/me`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+
+    if (!res.ok) return null
+
+    const data = await res.json()
+    return data.admin
+  } catch (err) {
+    return null
   }
-};
+}

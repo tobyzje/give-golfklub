@@ -17,48 +17,39 @@ export default function AdminLayout({
 }) {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const checkAuth = async () => {
       const userData = await getUser()
-      if (!userData || userData.role !== 'ADMIN') {
-        router.push('/admin/login')
+      if (!userData || (userData.role !== 'ADMIN' && userData.role !== 'MASTER')) {
+        router.push('/login')
         return
       }
       setUser(userData)
+      setLoading(false)
     }
+
     checkAuth()
   }, [router])
 
-  const handleLogout = async () => {
-    await fetch('http://localhost:5000/api/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
-    router.push('/admin/login')
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500">Indlæser...</div>
   }
 
   return (
     <div className="min-h-screen">
-      {user && ( // Vis kun header hvis bruger er logget ind
+      {user && (
         <div className="bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="flex-shrink-0 flex items-center">
-                  <h1 className="text-xl font-bold">Give Golfklub Admin</h1>
-                </div>
+              <div className="flex items-center">
+                <h1 className="text-xl font-bold text-[#1F4D1F]">Give Golfklub Admin</h1>
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-gray-600">
                   {user.first_name} {user.last_name}
                 </span>
-                <button
-                  onClick={handleLogout}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Log ud
-                </button>
               </div>
             </div>
           </div>
@@ -69,4 +60,4 @@ export default function AdminLayout({
       </main>
     </div>
   )
-} 
+}

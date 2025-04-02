@@ -1,29 +1,23 @@
-'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUser } from '@/lib/auth';
+import { cookies } from 'next/headers';
 
-const AdminPage = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+export default async function DashboardPage() {
+  const cookieStore = cookies();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const user = await getUser();
-      if (!user || user.role !== 'ADMIN') {
-        router.push('/admin/login');
-        return;
-      }
-      setLoading(false);
-    };
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/me`, {
+    credentials: 'include',
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+    cache: 'no-store',
+  });
 
-    checkAuth();
-  }, [router]);
+  if (!res.ok) {
+    return <p>Adgang nægtet. Du er ikke logget ind.</p>;
+  }
 
-  if (loading) return <p>Loading...</p>;
+  const { admin } = await res.json();
 
-  return <h1>Welcome Admin 👑</h1>;
-};
-
-export default AdminPage;
+  return <p>Velkommen {admin.first_name}!</p>;
+}
