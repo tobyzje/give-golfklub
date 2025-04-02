@@ -10,6 +10,7 @@ export async function getUser() {
     const data = await res.json();
     return data.admin;
   } catch (err) {
+    console.error('Fejl i getUser:', err);
     return null;
   }
 }
