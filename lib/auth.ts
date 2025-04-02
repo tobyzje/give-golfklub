@@ -2,14 +2,14 @@ export async function getUser() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/me`, {
       method: 'GET',
-      credentials: 'include',
-    })
+      credentials: 'include', // vigtigt for at sende cookies
+    });
 
-    if (!res.ok) return null
+    if (!res.ok) return null;
 
-    const data = await res.json()
-    return data.admin
+    const data = await res.json();
+    return data.admin;
   } catch (err) {
-    return null
+    return null;
   }
 }
